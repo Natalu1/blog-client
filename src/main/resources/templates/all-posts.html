@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+
+<h1>Posts:</h1>
+<table>
+    <thead>
+    <tr>
+        <th> Title</th>
+        <th> Content</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${posts.empty}">
+        <td colspan="2"> No Posts Available</td>
+    </tr>
+    <tr th:each="post : ${posts}">
+        <td><span th:text="${post.getTitle()}"> Title </span></td>
+        <td><span th:text="${post.getContent()}"> Content </span></td>
+    </tr>
+    </tbody>
+</table>
+<!-- /.container -->
+
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="starter-template">
+    <h1>
+        <span th:text="'Post found'"></span>
+    </h1>
+    <h2>
+        <div th:text="${post.getTitle()}"></div>
+        <div th:text="${post.getContent()}"></div>
+    </h2>
+
+</div>
+</html>
