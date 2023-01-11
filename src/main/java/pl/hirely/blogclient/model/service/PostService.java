@@ -1,28 +1,27 @@
 package pl.hirely.blogclient.model.service;
 
-import io.vavr.collection.HashMap;
-import io.vavr.collection.List;
-import io.vavr.collection.Map;
 import io.vavr.control.Option;
 import org.springframework.stereotype.Service;
 import pl.hirely.blogclient.model.client.PostClient;
 import pl.hirely.blogclient.model.dto.PostDto;
+import pl.hirely.blogclient.model.service.error.BlogConnectionException;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @Service
 public class PostService {
 
-    private static final Map<Integer, PostDto> POSTS = HashMap.of(
-            1, new PostDto("First post", "some random content1"),
-            2, new PostDto("Second post", "some random content2"),
-            3, new PostDto("Third", "some random content3"),
-            4, new PostDto("Next", "some random content4"),
-            5, new PostDto("Almost last", "some random content5"),
-            6, new PostDto("And the last", "some random content6"));
+//    private static final Map<Integer, PostDto> POSTS = HashMap.of(
+//            1, new PostDto("First post", "some random content1"),
+//            2, new PostDto("Second post", "some random content2"),
+//            3, new PostDto("Third", "some random content3"),
+//            4, new PostDto("Next", "some random content4"),
+//            5, new PostDto("Almost last", "some random content5"),
+//            6, new PostDto("And the last", "some random content6"));
 
     private final PostClient postClient;
 
@@ -35,16 +34,36 @@ public class PostService {
         Call<PostDto> postDtoCall = postClient.findPostById(postId);
         try {
             Response<PostDto> response = postDtoCall.execute();
-            return Option.of(response.body());
+            if (response.isSuccessful()){
+                return Option.of(response.body());
+            }else if (response.code() == 404){
+                return Option.none();
+            }
+                throw new BlogConnectionException
+                        (response.errorBody().toString());
         } catch (IOException e) {
-            e.printStackTrace();
-            return Option.none(); //in java would be Optional.empty()
+            throw new BlogConnectionException
+                    ("Unexpected connection problem");
+//            e.printStackTrace();
+//            return Option.none(); //in java would be Optional.empty()
         }
 
     }
 
-    public List<PostDto> getAllPosts() {
-        return POSTS.values().toList();
+    public io.vavr.collection.List<PostDto> getAllPosts() {
+        Call<List<PostDto>> postsDtoCall = postClient.findAllPosts();
+        try {
+            Response<List<PostDto>> response = postsDtoCall.execute();
+            if (response.isSuccessful()){
+                return io.vavr.collection.List.ofAll(response.body());
+            }
+            throw new BlogConnectionException
+                    (response.errorBody().toString());
+        } catch (IOException e) {
+            throw new BlogConnectionException
+                    ("Unexpected connection problem");
+        }
+
     }
 
 }

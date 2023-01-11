@@ -3,11 +3,11 @@ package pl.hirely.blogclient.controller;
 import io.vavr.collection.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import pl.hirely.blogclient.model.dto.PostDto;
 import pl.hirely.blogclient.model.service.PostService;
+import pl.hirely.blogclient.model.service.error.BlogConnectionException;
+
 
 @Controller
 @RequestMapping("/post")
@@ -27,8 +27,8 @@ public class PostController {
     }
 
     private String getSinglePostPage(PostDto postDto, Model model) {
-        model.addAttribute("post", postDto);
-        return "single-post";
+        model.addAttribute("post", postDto);//nazva zmenoj, kotoraja v html vyzyva title i content
+        return "single-post";//nazva faila html
     }
 
     private String getNotFoundPage() {
@@ -40,5 +40,13 @@ public class PostController {
         List<PostDto> posts = postService.getAllPosts();
         model.addAttribute("posts", posts);
         return "all-posts";
+    }
+
+    @ControllerAdvice
+    static class ErrorHandler {
+        @ExceptionHandler(BlogConnectionException.class)
+        public String handleConnectionError(BlogConnectionException e){
+            return "connection-error";//nazva html file
+        }
     }
 }
