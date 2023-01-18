@@ -8,6 +8,10 @@
         <div th:text="${post.getTitle()}"></div>
         <div th:text="${post.getContent()}"></div>
     </h2>
+<h2>add new comment</h2>
+    <form th:action="@{/post/__${post.getId()}__/comment}" th:object="${newComment}">
+        <p>Content: <input type="text" th:field="*{content}" /></p>
 
+    </form>
 </div>
 </html>

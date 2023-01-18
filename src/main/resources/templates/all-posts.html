@@ -6,8 +6,10 @@
 <table>
     <thead>
     <tr>
+        <th> ID</th>
         <th> Title</th>
         <th> Content</th>
+        <th> Comments</th>
     </tr>
     </thead>
     <tbody>
@@ -15,11 +17,23 @@
         <td colspan="2"> No Posts Available</td>
     </tr>
     <tr th:each="post : ${posts}">
+        <td><a th:text="${post.id}" th:href="@{/post/{id}(id=${post.id})}"></a></td>
         <td><span th:text="${post.getTitle()}"> Title </span></td>
         <td><span th:text="${post.getContent()}"> Content </span></td>
+        <td><span th:each="comment : ${post.getComments()}">
+            <span th:text="${comment.getContent()}"></span></span></td>
+<!--        <td><span th:text="${post.getComments()}"> Comments </span></td>-->
     </tr>
     </tbody>
 </table>
+
+<h1>Add new post</h1>
+<form action="#" th:action="@{/post}" th:object="${newPost}" method="post">
+    <p>Title: <input type="text" th:field="*{title}" /></p>
+    <p>Content: <input type="text" th:field="*{content}" /></p>
+    <p>Comments: <input type="text" th:field="*{comments}" /></p>
+    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+</form>
 <!-- /.container -->
 
 </html>

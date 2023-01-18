@@ -4,9 +4,12 @@ import io.vavr.collection.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pl.hirely.blogclient.model.dto.PostCommentDto;
 import pl.hirely.blogclient.model.dto.PostDto;
 import pl.hirely.blogclient.model.service.PostService;
+import pl.hirely.blogclient.model.service.error.BadRequestException;
 import pl.hirely.blogclient.model.service.error.BlogConnectionException;
+import pl.hirely.blogclient.model.service.error.NotFoundException;
 
 
 @Controller
@@ -28,6 +31,7 @@ public class PostController {
 
     private String getSinglePostPage(PostDto postDto, Model model) {
         model.addAttribute("post", postDto);//nazva zmenoj, kotoraja v html vyzyva title i content
+        model.addAttribute("newComment", new PostCommentDto());
         return "single-post";//nazva faila html
     }
 
@@ -38,15 +42,40 @@ public class PostController {
     @GetMapping
     public String getAllPosts(Model model) {
         List<PostDto> posts = postService.getAllPosts();
+        PostDto newPostForm = new PostDto();
         model.addAttribute("posts", posts);
+        model.addAttribute("newPost", newPostForm);
         return "all-posts";
     }
+
+    @PostMapping
+    public String createPost(@ModelAttribute PostDto postForm) {
+        postService.createNewPost(postForm);
+        return "redirect:/post";
+    }
+
+    @PostMapping("/{id}/comment")
+    public void createNewComment(@PathVariable("id") Long postId,
+                                 PostCommentDto commentDto) {
+        postService.createNewComment(postId, commentDto);
+    }
+
 
     @ControllerAdvice
     static class ErrorHandler {
         @ExceptionHandler(BlogConnectionException.class)
-        public String handleConnectionError(BlogConnectionException e){
+        public String handleConnectionError(BlogConnectionException e) {
             return "connection-error";//nazva html file
+        }
+
+        @ExceptionHandler(NotFoundException.class)
+        public String handConnectionError(NotFoundException e) {
+            return "not-found";
+        }
+
+        @ExceptionHandler(BadRequestException.class)
+        public String handleBadRequestError(BadRequestException e) {
+            return "bad-request";
         }
     }
 }

@@ -3,8 +3,11 @@ package pl.hirely.blogclient.model.service;
 import io.vavr.control.Option;
 import org.springframework.stereotype.Service;
 import pl.hirely.blogclient.model.client.PostClient;
+import pl.hirely.blogclient.model.dto.PostCommentDto;
 import pl.hirely.blogclient.model.dto.PostDto;
+import pl.hirely.blogclient.model.service.error.BadRequestException;
 import pl.hirely.blogclient.model.service.error.BlogConnectionException;
+import pl.hirely.blogclient.model.service.error.NotFoundException;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -34,13 +37,13 @@ public class PostService {
         Call<PostDto> postDtoCall = postClient.findPostById(postId);
         try {
             Response<PostDto> response = postDtoCall.execute();
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 return Option.of(response.body());
-            }else if (response.code() == 404){
-                return Option.none();
+            } else if (response.code() == 404) {
+                throw new NotFoundException();
             }
-                throw new BlogConnectionException
-                        (response.errorBody().toString());
+            throw new BlogConnectionException
+                    (response.errorBody().toString());
         } catch (IOException e) {
             throw new BlogConnectionException
                     ("Unexpected connection problem");
@@ -54,7 +57,7 @@ public class PostService {
         Call<List<PostDto>> postsDtoCall = postClient.findAllPosts();
         try {
             Response<List<PostDto>> response = postsDtoCall.execute();
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 return io.vavr.collection.List.ofAll(response.body());
             }
             throw new BlogConnectionException
@@ -65,5 +68,25 @@ public class PostService {
         }
 
     }
+    public void createNewPost(PostDto postDto) {
+        try {
+            Response<Void> response = postClient.createPost(postDto).execute();
+            if (response.code() == 400) {
+                throw new BadRequestException();
+            }
+        } catch (IOException e) {
+            throw new BlogConnectionException(e.getMessage());
+        }
+    }
+
+    public void createNewComment(Long postId, PostCommentDto postCommentDto){
+        try {
+            postClient.createPostComment(postId, postCommentDto).execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
 }
