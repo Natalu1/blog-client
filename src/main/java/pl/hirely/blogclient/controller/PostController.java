@@ -55,9 +55,10 @@ public class PostController {
     }
 
     @PostMapping("/{id}/comment")
-    public void createNewComment(@PathVariable("id") Long postId,
+    public String createNewComment(@PathVariable("id") Long postId,
                                  PostCommentDto commentDto) {
         postService.createNewComment(postId, commentDto);
+        return "redirect:/post";
     }
 
 

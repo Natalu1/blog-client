@@ -81,10 +81,14 @@ public class PostService {
 
     public void createNewComment(Long postId, PostCommentDto postCommentDto){
         try {
-            postClient.createPostComment(postId, postCommentDto).execute();
+            Response<Void> response = postClient.createPostComment(postId, postCommentDto).execute();
+            if (response.code() == 404) {
+                throw new NotFoundException();
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BlogConnectionException(e.getMessage());
         }
+
     }
 
 

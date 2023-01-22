@@ -31,7 +31,7 @@
 <form action="#" th:action="@{/post}" th:object="${newPost}" method="post">
     <p>Title: <input type="text" th:field="*{title}" /></p>
     <p>Content: <input type="text" th:field="*{content}" /></p>
-    <p>Comments: <input type="text" th:field="*{comments}" /></p>
+
     <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
 </form>
 <!-- /.container -->

@@ -9,9 +9,9 @@
         <div th:text="${post.getContent()}"></div>
     </h2>
 <h2>add new comment</h2>
-    <form th:action="@{/post/__${post.getId()}__/comment}" th:object="${newComment}">
+    <form th:action="@{/post/__${post.getId()}__/comment}" th:object="${newComment}" method="post">
         <p>Content: <input type="text" th:field="*{content}" /></p>
-
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
     </form>
 </div>
 </html>
