@@ -1,4 +1,4 @@
-package pl.hirely.blogclient.model.client;
+package pl.hirely.blogclient;
 
 
 import okhttp3.OkHttpClient;

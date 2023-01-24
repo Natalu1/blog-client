@@ -1,4 +1,4 @@
-package pl.hirely.blogclient.model.client;
+package pl.hirely.blogclient;
 
 import pl.hirely.blogclient.model.dto.PostCommentDto;
 import pl.hirely.blogclient.model.dto.PostDto;

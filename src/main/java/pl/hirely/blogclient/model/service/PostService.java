@@ -2,7 +2,7 @@ package pl.hirely.blogclient.model.service;
 
 import io.vavr.control.Option;
 import org.springframework.stereotype.Service;
-import pl.hirely.blogclient.model.client.PostClient;
+import pl.hirely.blogclient.PostClient;
 import pl.hirely.blogclient.model.dto.PostCommentDto;
 import pl.hirely.blogclient.model.dto.PostDto;
 import pl.hirely.blogclient.model.service.error.BadRequestException;
