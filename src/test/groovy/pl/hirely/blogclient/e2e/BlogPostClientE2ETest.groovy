@@ -17,7 +17,7 @@ class BlogPostClientE2ETest extends Specification {
     private WireMockServer wireMockServer = new WireMockServer(
             WireMockConfiguration.options().port(2345)
     )
-private TestRestTemplate restTemplate = new TestRestTemplate()
+    private TestRestTemplate restTemplate = new TestRestTemplate()
 
     void setup() {
         wireMockServer.start()
@@ -27,7 +27,7 @@ private TestRestTemplate restTemplate = new TestRestTemplate()
         wireMockServer.stop()
     }
 
-    def "should return 200 with correct html body when requesting single post"(){
+    def "should return 200 with correct html body when requesting single post"() {
         given:
         wireMockServer.stubFor(WireMock.get("/blog/post/5")
                 .willReturn(WireMock.aResponse().withStatus(200)
@@ -43,6 +43,7 @@ private TestRestTemplate restTemplate = new TestRestTemplate()
         response.getBody().contains("some-content")
 
     }
+
     private Body blogPostBody() {
         return new Body("""
                         {
@@ -51,4 +52,33 @@ private TestRestTemplate restTemplate = new TestRestTemplate()
                         }
                         """)
     }
+
+    def "should return 404 when requesting single post"() {
+        given:
+        wireMockServer.stubFor(WireMock.get("/blog/post/5")
+                .willReturn(WireMock.aResponse().withStatus(404)))
+
+        when:
+        def response = restTemplate.getForEntity("http://localhost:8081/post/5", String.class)
+
+        then:
+        response.statusCode == HttpStatusCode.valueOf(404)
+        response.getBody().contains("Post not found")
+
+    }
+
+    def "should return 400 when requesting single post"() {
+        given:
+        wireMockServer.stubFor(WireMock.post("/blog/post")
+                .willReturn(WireMock.aResponse().withStatus(400)))
+
+        when:
+        def response = restTemplate.postForEntity("http://localhost:8081/post", "Bad request", String.class)
+
+        then:
+        response.statusCode == HttpStatusCode.valueOf(400)
+        response.getBody().contains("Bad request")
+
+    }
+
 }
